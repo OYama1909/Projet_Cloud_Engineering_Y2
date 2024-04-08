@@ -1,0 +1,8 @@
+Flask==2.1.2
+Flask-RESTful==0.3.9
+APScheduler==3.8.1
+SQLAlchemy==1.4.31
+pandas==1.4.2
+PyMySQL==1.0.2
+gunicorn==20.1.0
+requests==2.27.1
