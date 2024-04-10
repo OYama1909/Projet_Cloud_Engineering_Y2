@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copier le fichier des dépendances et installer les dépendances
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir Flask msgpack
 
 # Copier le reste des fichiers du projet dans le répertoire de travail
 COPY . .
