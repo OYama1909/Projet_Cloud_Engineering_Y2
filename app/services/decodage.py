@@ -1,23 +1,13 @@
 import base64
-import json
+import msgpack
 
-def decode_data(encoded_data):
-    base64_bytes = encoded_data.encode('utf-8')
-    message_bytes = base64.b64decode(base64_bytes)
-    message = message_bytes.decode('utf-8')
-    return json.loads(message)
+# Base64 encoded MessagePack data
+encoded_message = "halzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTEwVDE2OjMzOjA4WqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
 
-from flask import Flask, request, jsonify
+# First, decode from Base64
+base64_decoded_bytes = base64.b64decode(encoded_message)
 
-app = Flask(__name__)
+# Then, unpack the MessagePack data
+decoded_data = msgpack.unpackb(base64_decoded_bytes)
 
-@app.route('/data', methods=['POST'])
-def receive_data():
-    data = request.data
-    decoded_data = decode_data(data)
-    print(decoded_data)  # Afficher les données pour le débogage
-    # Ici, vous pourriez appeler une fonction pour stocker les données dans la base de données.
-    return jsonify({"message": "Data received successfully"}), 200
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+print(decoded_data)
