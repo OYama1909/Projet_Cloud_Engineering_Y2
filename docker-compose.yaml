@@ -5,12 +5,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./app/services/inib.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./app/services/inib.sql:/docker-entrypoint-initdb.d/inib.sql
       - data_db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=root
-      - POSTGRES_DB=root
   flask-app:
     build: .
     ports:
