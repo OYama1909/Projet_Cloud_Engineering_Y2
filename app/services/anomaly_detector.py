@@ -1,0 +1,1 @@
+# def anomaly_detctor(temperature, humidity)
