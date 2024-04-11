@@ -5,10 +5,10 @@ import msgpack
 from flask import Flask, request, jsonify
 import json  
 
-# Configurations de la base de données (à remplacer par vos valeurs)
-DATABASE = "nom_de_votre_base_de_donnees"
-USER = "votre_user"
-PASSWORD = "votre_mot_de_passe"
+# Configurations de la base de données 
+DATABASE = "root"
+USER = "root"
+PASSWORD = "root"
 HOST = "localhost"  # ou l'adresse du service dans docker-compose
 PORT = "5432"
 
@@ -41,8 +41,9 @@ def decode_and_store(encoded_data, table_name):
     conn.close()
     
     print("Données insérées avec succès.")
+    print(data_text)
 
 # Exemple d'utilisation
-encoded_text = "VotreTexteEncodéEnBase64"
+encoded_text = "halzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTExVDA3OjI0OjUzWqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
 table_name = "nom_de_votre_table"
 decode_and_store(encoded_text, table_name)
