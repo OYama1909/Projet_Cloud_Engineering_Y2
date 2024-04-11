@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import msgpack
 import base64
+from services/decode_store import decode_and_store
 
 
 app = Flask(__name__)
@@ -12,15 +13,9 @@ def receive_data():
         data = request.data
         # Décoder les données MsgPack
         try:
-            # First, decode from Base64
-            base64_decoded_bytes = base64.b64decode(data)
-            # Then, unpack the MessagePack data
-            decoded_data = msgpack.unpackb(base64_decoded_bytes)
-            # Afficher les données décodées
-            print(decoded_data)
-            return jsonify({"status": "success", "message": "Data received and decoded successfully."}), 200
-        except msgpack.ExtraData as e:
-            return jsonify({"status": "error", "message": "Extra data received."}), 400
+            decode_and_store(data)
+        # except msgpack.ExtraData as e:
+        #     return jsonify({"status": "error", "message": "Extra data received."}), 400
     else:
        return jsonify({"status": "error", "message": "Invalid content type. Please send MsgPack data."}), 415
 
