@@ -4,6 +4,7 @@ from psycopg2.extras import execute_values
 import msgpack
 from flask import Flask, request, jsonify
 import json
+from anomaly_detector import anomaly_detector
 
 # Configurations de la base de données 
 DATABASE = "root"
@@ -28,36 +29,47 @@ def decode_and_store(encoded_data, table_name):
     cur = conn.cursor()
 
     # Insérer les données dans les tables appropriées
-    sensor_id = decoded_data["sensor_id"]
-    sensor_version = decoded_data["sensor_version"]
-    plant_id = decoded_data["plant_id"]
-    timestamp = decoded_data["time"]
-    measures = decoded_data["measures"]
+    sensor_id = data_text["sensor_id"]
+    sensor_version = data_text["sensor_version"]
+    plant_id = data_text["plant_id"]
+    timestamp = data_text["time"]
+    measures = data_text["measures"]
 
     temperature_value = float(measures["temperature"].replace("°C", ""))
     humidity_value = float(measures["humidite"].replace("%", ""))
 
-    # Insérer les données de température
-    cur.execute("INSERT INTO temperature (value, plant_id, sensor_id) VALUES (%s, %s, %s);", (temperature_value, plant_id, sensor_id))
+    if anomaly_detector(measures["temperature"]) == "anomaly":
+        temperature_value = anomaly_detector(temperature_value, "yes")
 
-    # Insérer les données d'humidité
-    cur.execute("INSERT INTO humidity (value) VALUES (%s, %s, %s);", (humidity_value, plant_id, sensor_id))
+        # Insérer les données de température
+        cur.execute("INSERT INTO anomaly (value_temp, value_humidity, plant_id, sensor_id) VALUES (%s, %s, %s, %s);", (temperature_value, humidity_value, plant_id, sensor_id))
 
-    # Insérer les données de l'ID de la plante (si nécessaire)
-    cur.execute("INSERT INTO id_plant (id) VALUES (%s);", (plant_id,))
+        # Valider la transaction
+        conn.commit()
 
-    # Insérer les données des capteurs
-    cur.execute("INSERT INTO id_sensors (id, type, timestamp) VALUES (%s, %s, %s);", (sensor_id, sensor_version, timestamp))
+        # Fermer la connexion
+        cur.close()
+        conn.close()
 
-    # Valider la transaction
-    conn.commit()
+    else:
+        # Insérer les données de température
+        cur.execute("INSERT INTO temperature (value, plant_id, sensor_id) VALUES (%s, %s, %s);", (temperature_value, plant_id, sensor_id))
 
-    # Fermer la connexion
-    cur.close()
-    conn.close()
+        # Insérer les données d'humidité
+        cur.execute("INSERT INTO humidity (value, plant_id, sensor_id) VALUES (%s, %s, %s);", (humidity_value, plant_id, sensor_id))
 
-    print("Données insérées avec succès.")
-    print(data_text)
+        # Insérer les données de l'ID de la plante (si nécessaire)
+        cur.execute("INSERT INTO id_plant (id) VALUES (%s);", (plant_id,))
+
+        # Insérer les données des capteurs
+        cur.execute("INSERT INTO id_sensors (id, type, timestamp) VALUES (%s, %s, %s);", (sensor_id, sensor_version, timestamp))
+
+        # Valider la transaction
+        conn.commit()
+
+        # Fermer la connexion
+        cur.close()
+        conn.close()
 
 
 # Exemple d'utilisation

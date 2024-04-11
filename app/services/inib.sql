@@ -21,3 +21,11 @@ CREATE TABLE id_sensors (
     type VARCHAR(50) NOT NULL,
     timestamp TIMESTAMP NOT NULL
 );
+
+CREATE TABLE anomaly (
+    id SERIAL PRIMARY KEY,
+    value_temp REAL NOT NULL,
+    value_humidity REAL NOT NULL,
+    plant_id VARCHAR(50) NOT NULL,
+    sensor_id VARCHAR(50) NOT NULL
+)
