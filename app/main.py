@@ -1,19 +1,21 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify  
+import msgpack
 
 app = Flask(__name__)
 
-# Example data - in a real application, this would be dynamic
-sensor_data = {
-    'temperature': 20.5,  # Celsius
-    'humidity': 50.0  # Percent
-}
 
-@app.route('/infos', methods=['GET'])
-def get_infos():
-    humidity = sensor_data['humidity']
-    temperature = sensor_data['temperature']
-    return jsonify({'humidity': humidity},{'temperature': temperature})
-
+@app.route('/recevie', methods=['POST'])
+def receive_data():
+    # Vérifier si les données reçues sont au format MsgPack
+    if request.content_type == 'application/msgpack':
+        data = request.data
+        # Décoder les données MsgPack
+        decoded_data = msgpack.unpackb(data, raw=False)
+        # Afficher les données décodées
+        print(decoded_data)
+        return jsonify({"status": "success", "message": "Data received and decoded successfully."}), 200
+    else:
+        return jsonify({"status": "error", "message": "Invalid content type. Please send MsgPack data."}), 415
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

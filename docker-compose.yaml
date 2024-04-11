@@ -1,5 +1,16 @@
 version: '3.8'
-services:
+services:  
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./app/services/inib.sql:/docker-entrypoint-initdb.d/init.sql
+      - data_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=citizix_user
+      - POSTGRES_DB=citizix_db
   flask-app:
     build: .
     ports:
@@ -65,5 +76,8 @@ services:
       - SENSOR_VERSION=FR-v7
       - PERIOD=2s
       - MEASURES=temperature:285.15°K,temperature:286.15°K,humidity:12%
+
+volumes:
+  data_db:
 
     
