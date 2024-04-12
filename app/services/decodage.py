@@ -2,7 +2,7 @@ import base64
 import msgpack
 
 # Base64 encoded MessagePack data
-encoded_message = "halzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTExVDA3OjI0OjUzWqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
+encoded_message = "alzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTExVDA5OjUxOjMyWqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
 
 # First, decode from Base64
 base64_decoded_bytes = base64.b64decode(encoded_message)
