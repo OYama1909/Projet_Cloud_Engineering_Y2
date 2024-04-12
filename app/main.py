@@ -14,8 +14,8 @@ def receive_data():
         # Décoder les données MsgPack
         try:
             decode_and_store(data)
-        # except msgpack.ExtraData as e:
-        #     return jsonify({"status": "error", "message": "Extra data received."}), 400
+        except msgpack.ExtraData as e:
+            return jsonify({"status": "error", "message": "Extra data received."}), 400
     else:
        return jsonify({"status": "error", "message": "Invalid content type. Please send MsgPack data."}), 415
 

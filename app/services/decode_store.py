@@ -4,7 +4,7 @@ from psycopg2.extras import execute_values
 import msgpack
 from flask import Flask, request, jsonify
 import json
-from anomaly_detector import anomaly_detector
+from app.services.anomaly_detector_fonction import anomaly_detector
 
 # Configurations de la base de données 
 DATABASE = "root"
