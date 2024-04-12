@@ -4,7 +4,7 @@ import base64
 import psycopg2
 from psycopg2.extras import execute_values
 import json
-from app.services.anomaly_detector_fonction import anomaly_detector
+from services.anomaly_detector_fonction import anomaly_detector
 
 app = Flask(__name__)
 
@@ -26,27 +26,39 @@ def receive_data():
             # Premièrement, décoder depuis Base64
             base64_decoded_bytes = base64.b64decode(data)
 
-            # Ensuite, décompresser les données MessagePack
+            # Enappsuite, décompresser les données MessagePack
             decoded_data = msgpack.unpackb(base64_decoded_bytes)
 
-            # Convertir les données JSON en texte
-            data_text = json.dumps(decoded_data)
+            print(decoded_data)
 
             # Insérer les données textuelles dans la base de données PostgreSQL
             conn = psycopg2.connect(dbname=DATABASE, user=USER, password=PASSWORD, host=HOST, port=PORT)
             cur = conn.cursor()
 
             # Insérer les données dans les tables appropriées
-            sensor_id = data_text["sensor_id"]
-            sensor_version = data_text["sensor_version"]
-            plant_id = data_text["plant_id"]
-            timestamp = data_text["time"]
-            measures = data_text["measures"]
+            sensor_id = decoded_data["sensor_id"]
+            sensor_version = decoded_data["sensor_version"]
+            plant_id = decoded_data["plant_id"]
+            timestamp = decoded_data["time"]
+            measures = decoded_data["measures"]
+            
+            if measures["temperature"]:
+                if measures["temperature"][-1] == "F":
+                    temperature_value = (float(measures["temperature"][0:-2]) - 32) / 1.8
 
-            temperature_value = float(measures["temperature"].replace("°C", ""))
-            humidity_value = float(measures["humidite"].replace("%", ""))
+                if measures["temperature"][-1] == "K":
+                    temperature_value = float(measures["temperature"][0:-2]) - 273.15
 
-            if anomaly_detector(measures["temperature"]) == "anomaly":
+                if measures["temperature"][-1] == "C":
+                    temperature_value = float(measures["temperature"].replace("°C",""))
+            
+            if measures["humidity"]:
+                humidity_value = float(measures["humidity"].replace("%", ""))
+            
+            if measures["humidite"]:
+                humidity_value = float(measures["humidite"].replace("%", ""))
+
+            if anomaly_detector(temperature_value) == "anomaly":
                 temperature_value = anomaly_detector(temperature_value, "yes")
 
                 # Insérer les données de température
