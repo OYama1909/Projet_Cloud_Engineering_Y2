@@ -14,7 +14,7 @@ def receive_data():
     # Vérifier si les données reçues sont au format MsgPack
     if request.content_type == 'application/json':
         data = request.data
-        # Décoder les données MsgPack
+        
         try:
             # Configurations de la base de données 
             DATABASE = "root"
@@ -44,10 +44,10 @@ def receive_data():
             
             if measures["temperature"]:
                 if measures["temperature"][-1] == "F":
-                    temperature_value = (float(measures["temperature"][0:-2]) - 32) / 1.8
+                    temperature_value = (float(measures["temperature"].replace("°F","")) - 32) / 1.8
 
                 if measures["temperature"][-1] == "K":
-                    temperature_value = float(measures["temperature"][0:-2]) - 273.15
+                    temperature_value = float(measures["temperature"].replace("°K","")) - 273.15
 
                 if measures["temperature"][-1] == "C":
                     temperature_value = float(measures["temperature"].replace("°C",""))
@@ -59,8 +59,6 @@ def receive_data():
                 humidity_value = float(measures["humidite"].replace("%", ""))
 
             if anomaly_detector(temperature_value) == "anomaly":
-                temperature_value = anomaly_detector(temperature_value, "yes")
-
                 # Insérer les données de température
                 cur.execute("INSERT INTO anomaly (value_temp, value_humidity, plant_id, sensor_id) VALUES (%s, %s, %s, %s);", (temperature_value, humidity_value, plant_id, sensor_id))
 
