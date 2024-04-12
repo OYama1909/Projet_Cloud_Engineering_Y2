@@ -10,11 +10,11 @@ from anomaly_detector import anomaly_detector
 DATABASE = "root"
 USER = "root"
 PASSWORD = "root"
-HOST = "localhost"  # ou l'adresse du service dans docker-compose
+HOST = "127.0.0.1"
 PORT = "5432"
 
 
-def decode_and_store(encoded_data, table_name):
+def decode_and_store(encoded_data):
     # Premièrement, décoder depuis Base64
     base64_decoded_bytes = base64.b64decode(encoded_data)
 
@@ -73,6 +73,5 @@ def decode_and_store(encoded_data, table_name):
 
 
 # Exemple d'utilisation
-encoded_text = "halzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTExVDA3OjI0OjUzWqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
-table_name = "nom_de_votre_table"
-decode_and_store(encoded_text, table_name)
+# encoded_text = "halzZW5zb3JfaWSmMTI2NTMxrnNlbnNvcl92ZXJzaW9upUZSLXY4qHBsYW50X2lkzgAAAAOkdGltZbQyMDI0LTA0LTExVDA3OjI0OjUzWqhtZWFzdXJlc4KrdGVtcGVyYXR1cmWlMTTCsEOoaHVtaWRpdGWjMTgl"
+# decode_and_store(encoded_text, table_name)
